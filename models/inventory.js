@@ -9,8 +9,8 @@ const inventorySchema = mongoose.Schema({
   accountID: { type: String, index: true, required: true },
   from: { type: String, required: true },
   userID: { type: String, index: true, required: true },
-  quantity: { type: Number, required: true },
-  reference: { type: String, required: true },   // reference to db.tokens
+  quantity: { type: Number, required: true },   // represents amount of TLD
+  reference: { type: String, required: true },  // reference to db.tokens
   price: { type: Number, required: true },
   currency: { type: String, required: true },
   network: { type: String, required: true },
@@ -21,7 +21,8 @@ const inventorySchema = mongoose.Schema({
   timestamp: { type: Number },
   issuance: {
     network: { type: String, enum: environment.networks },
-    address: { type: String, required: true }
+    address: { type: String, required: true },
+    incentive: { type: Number, required: false, default: 0} // represents amount of TLD
   }
 });
 

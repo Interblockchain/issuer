@@ -1,12 +1,12 @@
 {
-  "name": "relay",
+  "name": "issuer",
   "version": "1.0.0",
   "description": "",
-  "main": "fonctionsTLD.js",
+  "main": "app.js",
   "scripts": {
     "start": "node ./app",
-    "build": "docker build -t interblockchainlab/relay -f Dockerfile  .",
-    "push": "docker push interblockchainlab/relay"
+    "build": "docker build -t interblockchainlab/issuer -f Dockerfile  .",
+    "push": "docker push interblockchainlab/issuer"
   },
   "keywords": [],
   "author": "",
