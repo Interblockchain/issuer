@@ -13,7 +13,7 @@ const CronJob = require('cron').CronJob;
 const Inventory = require('./models/inventory');
 let debug = true;
 
-let startDate = new Date('May 7, 2020 9:00:00');    // start bonus period
+let startDate = new Date('May 8, 2020 9:00:00');    // start bonus period
 let bonusPeriod = 14;                               // bonus period in days
 let endDate = new Date(startDate.getTime());        // end bonus period
 endDate.setDate(startDate.getDate() + bonusPeriod);
@@ -82,8 +82,8 @@ async function sendTLD() {
     if (updateIncentive) {
       await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "issuance.incentive": incentive } });
     }
-    return true;
   }
+  return true;
 }
 
 async function getNetworkFees(network, currency) {
