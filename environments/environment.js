@@ -2,6 +2,8 @@ module.exports = environment = {
   networks: ['ETH', 'EOS', 'TLOS', 'XLM'],  // issuance networks
   currency: "TLD",
   incentiveRate: 0.5,
+  startDate: 'May 8, 2020 9:00:00',
+  bonusPeriod: 14,  // in days
   mongoHost: "mongo",
   // mongoHost: "142.93.60.68",
   mongoPort: 27017,

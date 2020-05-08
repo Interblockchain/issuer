@@ -13,10 +13,9 @@ const CronJob = require('cron').CronJob;
 const Inventory = require('./models/inventory');
 let debug = true;
 
-let startDate = new Date('May 8, 2020 9:00:00');    // start bonus period
-let bonusPeriod = 14;                               // bonus period in days
+let startDate = new Date(environment.startDate);    // start bonus period                              // bonus period in days
 let endDate = new Date(startDate.getTime());        // end bonus period
-endDate.setDate(startDate.getDate() + bonusPeriod);
+endDate.setDate(startDate.getDate() + environment.bonusPeriod);
 console.log(`endDate: ${endDate}`);
 
 // sendTLD();
