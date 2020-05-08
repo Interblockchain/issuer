@@ -1,6 +1,40 @@
+let message = 
+`
+Thank you for participating in our crowdfunding campaign and becoming a Community member
+and Stakeholder. We appreciate your contribution enabling us to continue developing one
+of the most innovative platform on the market. The TLD is a true utility token providing
+benefits throughout our applications. Transledger is the only company offering the ability
+to bring Bitcoins onto blockchains such as Ethereum, EOS, TELOS or Stellar to trade peer-to-peer.  
+
+As a Stakeholder and depending upon your contribution you can benefit from 25% to 50% discount
+on our MoveTokens and Decentralized Exchange applications fees. We invite you to discover how
+Transledger is truly a unified platform with unique features. As an early Stakeholder in the 
+TLD you have been awarded a 50% bonus on your contribution. 
+
+We realize that these are not normal circumstances. As the world suffers through COVID-19,
+we all experience confinement and avoid "dirty" payment methods with paper money (3000 types
+of bacteria can live on a dollar bill) and we can only imagine what a post-COVID-19 world
+will look like. We at Transledger are continuing to develop and test our services with an
+even stronger sense of purpose: to provide the best trading and payment solutions using
+digital assets.
+
+Please do not hesitate to contact us if you have questions.
+
+Best regards,
+
+Jean-Luc Marcoux
+Co-Founder, CMO
+community@transledger.io
+`
+
+
 module.exports = environment = {
   networks: ['ETH', 'EOS', 'TLOS', 'XLM'],  // issuance networks
   currency: "TLD",
+  emailFrom: "community@transledger.io",
+  emailPass: "Marsipulami1",
+  emailSubject: "TLD tokens have been sent to your wallet",
+  emailMessage = message,
   incentiveRate: 0.5,
   mongoHost: "mongo",
   // mongoHost: "142.93.60.68",

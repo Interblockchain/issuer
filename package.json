@@ -16,6 +16,7 @@
     "cron": "^1.8.2",
     "mongoose": "^5.9.10",
     "mongoose-paginate": "^5.0.3",
+    "nodemailer": "^6.4.6",
     "translib": "^1.0.28"
   }
 }
