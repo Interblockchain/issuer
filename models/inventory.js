@@ -24,7 +24,8 @@ const inventorySchema = mongoose.Schema({
     address: { type: String, required: true },
     incentive: { type: Number, required: false, default: 0 }, // represents amount of TLD
     stake: {type: Boolean, required: false, default: false} // use this account for staked TLD to calculate fees
-  }
+  },
+  emailSent: { type: Number, required: false, default: 0 },
 });
 
 inventorySchema.plugin(mongoosePaginate);

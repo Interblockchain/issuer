@@ -20,14 +20,15 @@ let endDate = new Date(startDate.getTime());        // end bonus period
 endDate.setDate(startDate.getDate() + bonusPeriod);
 console.log(`endDate: ${endDate}`);
 
-// sendTLD();
+sendTLD();
 // new CronJob('0 * * * *', () => {  // every hour
-new CronJob('0 9 */2 * *', () => {  // every 2 days at 9 AM
-  sendTLD();
-}, null, true);
+// new CronJob('0 9 */2 * *', () => {  // every 2 days at 9 AM
+//   sendTLD();
+// }, null, true);
 
 async function sendTLD() {
   // 1) first step: sending TLD
+
   console.log(`${logTime()} sending TLD...`);
   let incentive;
   let amountTLD;
@@ -75,19 +76,24 @@ async function sendTLD() {
     }
 
     let timestamp = new Date().getTime();
-    let requestLocation = `${environment.requestFile}/${timestamp}.txt`;
-    fs.writeFile(requestLocation, JSON.stringify(airgapObj), function (err) {
-      if (err) throw err;
-      console.log(`withdrawal request file saved: ${timestamp}.txt`);
-    });
+    // let requestLocation = `${environment.requestFile}/${timestamp}.txt`;
+    // fs.writeFile(requestLocation, JSON.stringify(airgapObj), function (err) {
+    //   if (err) throw err;
+    //   console.log(`withdrawal request file saved: ${timestamp}.txt`);
+    // });
     await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { cleared: true, clearingTime: timestamp } });
     if (updateIncentive) {
       await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "issuance.incentive": incentive } });
     }
-    sendMail(environment.emailFrom, environment.emailPass, recipient, environment.emailSubject, environment.emailMessage);
-    // 2) sending notification email if no network and address
-    let notifications = await Inventory.find({ paid: true, cleared: false, $or: [ { "issuance.network": "N/A" }, { "issuance.address": "N/A" } ] });
+    sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjThankyou, environment.msgThankyou);
+    await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "emailSent": timestamp } });
   }
+  
+  // 2) sending notification email if no network and address
+  // let notifications = await Inventory.find({ paid: true, cleared: false, $or: [{ "issuance.network": "N/A" }, { "issuance.address": "N/A" }] });
+  // for (let notification of notifications) {
+
+  // }
   return true;
 }
 
@@ -101,11 +107,11 @@ async function getNetworkFees(network, currency) {
   });
   try {
     debug ? console.log(`${logTime()} [tokens:getNetworkFees] from ledger -> ${network}:${currency}`) : null;
-    const response = await http.get(`${environment.ledgerServer}:${environment.ledgerPort}/fees/${network}/${currency}`);
-    // let response = { };
-    // response.data = {};
-    // response.data.fees = "0.0001";
-    // response.message = "OK";
+    // const response = await http.get(`${environment.ledgerServer}:${environment.ledgerPort}/fees/${network}/${currency}`);
+    let response = { };
+    response.data = {};
+    response.data.fees = "0.0001";
+    response.message = "OK";
     if (response) {
       debug ? console.log(`${logTime()} [tokens:getNetworkFees] received from ledger -> data:${JSON.stringify(response.data)}, status:${response.status}, message:${response.message}`) : null;
       if (response.data) {
@@ -147,8 +153,10 @@ async function sendMail(from, pass, recipient, subject, content) {
   let info = await transporter.sendMail({
     from: `"transledger" <${environment.emailFrom}>`, // sender address
     to: recipient, // list of receivers
+    bcc: environment.emailCMO,
     subject: subject,
-    text: JSON.stringify(content) // plain text body
+    text: content // plain text body
+    // text: JSON.stringify(content) // plain text body
     // html: "<b>Hello world?</b>" // html body
   });
 
@@ -160,65 +168,5 @@ async function sendMail(from, pass, recipient, subject, content) {
   // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
-
-let message0 =
-`
-Thank you for participating in our crowdfunding campaign and becoming a Community member
-and Stakeholder. We appreciate your contribution enabling us to continue developing one
-of the most innovative platform on the market. The TLD is a true utility token providing
-benefits throughout our applications. Transledger is the only company offering the ability
-to bring Bitcoins onto blockchains such as Ethereum, EOS, TELOS or Stellar to trade peer-to-peer.  
-
-As a Stakeholder and depending upon your contribution you can benefit from 25% to 50% discount
-on our MoveTokens and Decentralized Exchange applications fees. We invite you to discover how
-Transledger is truly a unified platform with unique features. As an early Stakeholder in the 
-TLD you have been awarded a 50% bonus on your contribution. 
-
-We realize that these are not normal circumstances. As the world suffers through COVID-19,
-we all experience confinement and avoid "dirty" payment methods with paper money (3000 types
-of bacteria can live on a dollar bill) and we can only imagine what a post-COVID-19 world
-will look like. We at Transledger are continuing to develop and test our services with an
-even stronger sense of purpose: to provide the best trading and payment solutions using
-digital assets.
-
-Please do not hesitate to contact us if you have questions.
-
-Best regards,
-
-Jean-Luc Marcoux
-Co-Founder, CMO
-community@transledger.io
-`
-
-
-let message1 =
-`
-Thank you for your payment. We are currently processing your transaction.
-TLD tokens will be issued within 48hrs.
-
-Best regards,
-
-Transledger Customer Care
-community@transledger.io
-`
-
-
-let message2 = 
-`
-Thank you for your payment. We are currently processing your transaction.
-TLD tokens will be issued within 48hrs.
-
-We noticed that you did not provide an issuance network and/or address.
-Please note you must provide an issuance network and a valid address in
-order for us to complete the transaction.
-Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section
-and follow instructions.
-
-Best regards,
-
-Transledger Customer Care
-community@transledger.io
-`
-
 
 function logTime() { return Date().toString().substring(0, 24) }

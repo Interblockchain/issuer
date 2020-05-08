@@ -1,6 +1,5 @@
-let message = 
-`
-Thank you for participating in our crowdfunding campaign and becoming a Community member
+let msgThankyou =   // TLD has been sent
+`Thank you for participating in our crowdfunding campaign and becoming a Community member
 and Stakeholder. We appreciate your contribution enabling us to continue developing one
 of the most innovative platform on the market. The TLD is a true utility token providing
 benefits throughout our applications. Transledger is the only company offering the ability
@@ -27,15 +26,65 @@ Co-Founder, CMO
 community@transledger.io
 `
 
+let msgReminder =
+`
+We are currently issuing transledger tokens (TLD).
+
+We noticed that you did not provide an issuance network and/or address.
+Please note you must provide an issuance network and a valid address in
+order for us to complete the transaction.
+Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section
+and follow instructions.
+
+The next TLD tokens issuance will be performed in about 48 hrs.
+
+Best regards,
+
+Transledger Customer Care
+community@transledger.io
+`
+
+let msgProcessing =
+`
+Thank you for your payment. We are currently processing your transaction.
+TLD tokens will be issued within 48hrs.
+
+Best regards,
+
+Transledger Customer Care
+community@transledger.io
+`
+
+
+let msgWarning = 
+`
+Thank you for your payment. We are currently processing your transaction.
+TLD tokens will be issued within 48hrs.
+
+We noticed that you did not provide an issuance network and/or address.
+Please note you must provide an issuance network and a valid address in
+order for us to complete the transaction.
+Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section
+and follow instructions.
+
+Best regards,
+
+Transledger Customer Care
+community@transledger.io
+`
 
 module.exports = environment = {
   networks: ['ETH', 'EOS', 'TLOS', 'XLM'],  // issuance networks
   currency: "TLD",
   emailFrom: "community@transledger.io",
-  emailPass: "Marsipulami1",
-  emailSubject: "TLD tokens have been sent to your wallet",
-  emailMessage = message,
+  emailPass: "dk48s3H34Z",
+  emailCMO: "jlmarcoux@transledger.io",
   incentiveRate: 0.5,
+  msgThankyou: msgThankyou,
+  sbjThankyou: "TLD tokens have been sent to your wallet",
+  msgProcessing: msgProcessing,
+  msgWarning: msgWarning,
+  msgReminder: msgReminder,
   mongoHost: "mongo",
   // mongoHost: "142.93.60.68",
   mongoPort: 27017,
