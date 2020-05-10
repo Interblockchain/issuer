@@ -19,22 +19,26 @@ let endDate = new Date(startDate.getTime());        // end bonus period
 endDate.setDate(startDate.getDate() + environment.bonusPeriod);
 console.log(`endDate: ${endDate}`);
 
-sendTLD();
-// new CronJob('0 * * * *', () => {  // every hour
-// new CronJob('0 9 */2 * *', () => {  // every 2 days at 9 AM
-//   sendTLD();
-// }, null, true);
+// sendTLD();
+// sendReminder();
+// new CronJob('*/2 * * * *', async () => {
+  new CronJob('0 9 */2 * *', () => {  // every 2 days at 9 AM
+  await sendTLD();
+  await sendReminder();
+}, null, true);
 
-async function sendTLD() {
-  // 1) first step: sending TLD
+// sendThankYou();
+new CronJob('*/5 * * * *', () => {  // every 5 minutes
+  sendThankYou();
+}, null, true);
 
+async function sendTLD() {  // everything is fine --> send TLD
   console.log(`${logTime()} sending TLD...`);
   let incentive;
   let amountTLD;
   let updateIncentive = false;
   // let inventories = await Inventory.find({ "transactionID" : "6219995a-d4e1-4d2d-b941-2818e3faccb0" });
-  let inventories = await Inventory.find({ paid: true, cleared: false, "issuance.network": environment.networks, "issuance.address": {$ne: "N/A" } });
-  // let inventories = await Inventory.find({ paid: true, cleared: false });
+  let inventories = await Inventory.find({ paid: true, cleared: false, "issuance.network": environment.networks, "issuance.address": { $ne: "N/A" } });
   // TODO: issuance: valid address ?
   if (inventories.length == 0) {
     console.log(`${logTime()} no TLD transaction to pay`);
@@ -75,25 +79,66 @@ async function sendTLD() {
     }
 
     let timestamp = new Date().getTime();
-    // let requestLocation = `${environment.requestFile}/${timestamp}.txt`;
-    // fs.writeFile(requestLocation, JSON.stringify(airgapObj), function (err) {
-    //   if (err) throw err;
-    //   console.log(`withdrawal request file saved: ${timestamp}.txt`);
-    // });
+    let requestLocation = `${environment.requestFile}/${timestamp}.txt`;
+    fs.writeFile(requestLocation, JSON.stringify(airgapObj), function (err) {
+      if (err) throw err;
+      console.log(`withdrawal request file saved: ${timestamp}.txt`);
+    });
     await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { cleared: true, clearingTime: timestamp } });
     if (updateIncentive) {
       await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "issuance.incentive": incentive } });
     }
-    sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjThankyou, environment.msgThankyou);
-    await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "emailSent": timestamp } });
+    console.log(`send tld to ${inventory.userID}`);
+    // no need to set emailSent --> cleared is now true
+    await sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjThankyou, environment.msgThankyou);
   }
-  
-  // 2) sending notification email if no network and address
-  // let notifications = await Inventory.find({ paid: true, cleared: false, $or: [{ "issuance.network": "N/A" }, { "issuance.address": "N/A" }] });
-  // for (let notification of notifications) {
-
-  // }
   return true;
+}
+
+async function sendReminder() {   // tokens are paid and no network and/or address has been set
+  console.log(`${logTime()} sending reminders...`);
+  let timestamp = new Date().getTime();
+  let inventories = await Inventory.find({ paid: true, cleared: false, $or: [{ "issuance.network": "N/A" }, { "issuance.address": "N/A" }] });
+  for (let inventory of inventories) {
+    // console.log(JSON.stringify(inventory, null, 2));
+    if (!inventory.emailSent) {
+      console.log("email not sent: send reminder");
+      await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "emailSent": timestamp } });
+      await sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjReminder, environment.msgReminder);
+    } else {
+      // send reminder only if sendThankYou was sent at least 24 hours ago...
+      let yesterday = new Date();
+      yesterday.setHours(yesterday.getHours() - 24);
+      // yesterday.setMinutes(yesterday.getMinutes() - 3);
+      let emailSentDate = new Date(inventory.emailSent);
+      if (emailSentDate < yesterday) {
+        console.log("email sent more than 2 days ago: send reminder");
+        await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "emailSent": timestamp } });
+        await sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjReminder, environment.msgReminder);
+      }
+    }
+  }
+}
+
+async function sendThankYou() {   // paid is true: TLD are coming...
+  console.log(`${logTime()} sending ThankYou/warnings...`);
+  let timestamp = new Date().getTime();
+  // 1) Thank You, TLD are coming soon...
+  let inventories = await Inventory.find({ paid: true, cleared: false, "issuance.network": environment.networks, "issuance.address": { $ne: "N/A" }, "emailSent": null });
+  for (let inventory of inventories) {
+    // console.log(inventory);
+    console.log("send thankYou");
+    await Inventory.updateOne({ transactionID: inventory.transactionID }, { $set: { "emailSent": timestamp } });
+    await sendMail(environment.emailFrom, environment.emailPass, inventory.userID, environment.sbjAcknowledge, environment.msgAcknowledge);
+  }
+  // 2) Thank, TLD are coming soon, You but please provide network and address
+  let warnings = await Inventory.find({ paid: true, cleared: false, $or: [{ "issuance.network": "N/A" }, { "issuance.address": "N/A" }], "emailSent": null });
+  for (let warning of warnings) {
+    // console.log(warning);
+    console.log("send Warnings");
+    await Inventory.updateOne({ transactionID: warning.transactionID }, { $set: { "emailSent": timestamp } });
+    await sendMail(environment.emailFrom, environment.emailPass, warning.userID, environment.sbjWarning, environment.msgWarning);
+  }
 }
 
 async function getNetworkFees(network, currency) {
@@ -107,7 +152,7 @@ async function getNetworkFees(network, currency) {
   try {
     debug ? console.log(`${logTime()} [tokens:getNetworkFees] from ledger -> ${network}:${currency}`) : null;
     // const response = await http.get(`${environment.ledgerServer}:${environment.ledgerPort}/fees/${network}/${currency}`);
-    let response = { };
+    let response = {};
     response.data = {};
     response.data.fees = "0.0001";
     response.message = "OK";
@@ -152,7 +197,7 @@ async function sendMail(from, pass, recipient, subject, content) {
   let info = await transporter.sendMail({
     from: `"transledger" <${environment.emailFrom}>`, // sender address
     to: recipient, // list of receivers
-    bcc: environment.emailCMO,
+    // bcc: environment.emailCMO,
     subject: subject,
     text: content // plain text body
     // text: JSON.stringify(content) // plain text body

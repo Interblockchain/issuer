@@ -1,21 +1,9 @@
 let msgThankyou =   // TLD has been sent
-`Thank you for participating in our crowdfunding campaign and becoming a Community member
-and Stakeholder. We appreciate your contribution enabling us to continue developing one
-of the most innovative platform on the market. The TLD is a true utility token providing
-benefits throughout our applications. Transledger is the only company offering the ability
-to bring Bitcoins onto blockchains such as Ethereum, EOS, TELOS or Stellar to trade peer-to-peer.  
+`Thank you for participating in our crowdfunding campaign and becoming a Community member and Stakeholder. We appreciate your contribution enabling us to continue developing one of the most innovative platform on the market. The TLD is a true utility token providing benefits throughout our applications. Transledger is the only company offering the ability to bring Bitcoins onto blockchains such as Ethereum, EOS, TELOS or Stellar to trade peer-to-peer.  
 
-As a Stakeholder and depending upon your contribution you can benefit from 25% to 50% discount
-on our MoveTokens and Decentralized Exchange applications fees. We invite you to discover how
-Transledger is truly a unified platform with unique features. As an early Stakeholder in the 
-TLD you have been awarded a 50% bonus on your contribution. 
+As a Stakeholder and depending upon your contribution you can benefit from 25% to 50% discount on our MoveTokens and Decentralized Exchange applications fees. We invite you to discover how Transledger is truly a unified platform with unique features. As an early Stakeholder in the TLD you have been awarded a 50% bonus on your contribution. 
 
-We realize that these are not normal circumstances. As the world suffers through COVID-19,
-we all experience confinement and avoid "dirty" payment methods with paper money (3000 types
-of bacteria can live on a dollar bill) and we can only imagine what a post-COVID-19 world
-will look like. We at Transledger are continuing to develop and test our services with an
-even stronger sense of purpose: to provide the best trading and payment solutions using
-digital assets.
+We realize that these are not normal circumstances. As the world suffers through COVID-19, we all experience confinement and avoid "dirty" payment methods with paper money (3000 types of bacteria can live on a dollar bill) and we can only imagine what a post-COVID-19 world will look like. We at Transledger are continuing to develop and test our services with an even stronger sense of purpose: to provide the best trading and payment solutions using digital assets.
 
 Please do not hesitate to contact us if you have questions.
 
@@ -30,11 +18,7 @@ let msgReminder =
 `
 We are currently issuing transledger tokens (TLD).
 
-We noticed that you did not provide an issuance network and/or address.
-Please note you must provide an issuance network and a valid address in
-order for us to complete the transaction.
-Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section
-and follow instructions.
+We noticed that you did not provide an issuance network and/or address. Please note you must provide an issuance network and a valid address in order for us to complete the transaction. Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section and follow instructions.
 
 The next TLD tokens issuance will be performed in about 48 hrs.
 
@@ -44,7 +28,7 @@ Transledger Customer Care
 community@transledger.io
 `
 
-let msgProcessing =
+let msgAcknowledge =
 `
 Thank you for your payment. We are currently processing your transaction.
 TLD tokens will be issued within 48hrs.
@@ -61,11 +45,7 @@ let msgWarning =
 Thank you for your payment. We are currently processing your transaction.
 TLD tokens will be issued within 48hrs.
 
-We noticed that you did not provide an issuance network and/or address.
-Please note you must provide an issuance network and a valid address in
-order for us to complete the transaction.
-Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section
-and follow instructions.
+We noticed that you did not provide an issuance network and/or address. Please note you must provide an issuance network and a valid address in order for us to complete the transaction. Please login to your Transledger account and go to the "Manage and Buy Transledger Tokens" section and follow instructions.
 
 Best regards,
 
@@ -83,12 +63,14 @@ module.exports = environment = {
   startDate: 'May 8, 2020 9:00:00',
   bonusPeriod: 14,  // in days
   msgThankyou: msgThankyou,
-  sbjThankyou: "TLD tokens have been sent to your wallet",
-  msgProcessing: msgProcessing,
+  sbjThankyou: "Transledger TLD tokens have been sent to your wallet",
+  msgAcknowledge: msgAcknowledge,
+  sbjWarning: "Transledger: Thank You",
   msgWarning: msgWarning,
+  sbjReminder: "Transledger reminder: please provide address for TLD issuance",
   msgReminder: msgReminder,
-  mongoHost: "mongo",
-  // mongoHost: "142.93.60.68",
+  // mongoHost: "mongo",
+  mongoHost: "142.93.60.68",
   mongoPort: 27017,
   mongoDB: "transledger",
   mongoUser: "transledgerUser",
