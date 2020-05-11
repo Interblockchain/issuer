@@ -22,7 +22,7 @@ console.log(`endDate: ${endDate}`);
 // sendTLD();
 // sendReminder();
 // new CronJob('*/2 * * * *', async () => {
-  new CronJob('0 9 */2 * *', () => {  // every 2 days at 9 AM
+  new CronJob('0 9 */2 * *', async () => {  // every 2 days at 9 AM
   await sendTLD();
   await sendReminder();
 }, null, true);
